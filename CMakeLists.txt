@@ -13,9 +13,10 @@ add_executable(${PROJECT_NAME} src/main.cpp src/glad.c src/Shader.cpp)
 
 
 target_link_libraries(${PROJECT_NAME} glfw)
-
 find_package(OpenGL REQUIRED)
-
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
-message(${OPENGL_INCLUDE_DIR})
+message(STATUS ${OPENGL_INCLUDE_DIR})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+

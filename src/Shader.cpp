@@ -77,7 +77,7 @@ std::string Shader::readShader(const char *filePath){
     }
     catch(std::fstream::failure e)
     {
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ\n" << e.what() << '\n';
+        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: Filepath: " << filePath << "\n" << e.what() << '\n';
     }
     return ss.str();
 }
