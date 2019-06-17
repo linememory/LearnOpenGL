@@ -52,8 +52,8 @@ int main() {
 	}
 
 	// build and compile our shader program
-	Shader shader1{"../data/shader/vertex_shader.txt", "../data/shader/fragment_shader.txt"};
-	Shader shader2{"../data/shader/vertex2_shader.txt", "../data/shader/fragment2_shader.txt"};
+	Shader shader1{"./data/shader/vertex_shader.txt", "./data/shader/fragment_shader.txt"};
+	Shader shader2{"./data/shader/vertex2_shader.txt", "./data/shader/fragment2_shader.txt"};
 
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
