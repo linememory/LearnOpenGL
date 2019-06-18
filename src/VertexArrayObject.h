@@ -16,8 +16,8 @@ public:
     ~VertexArrayObject();
 
     void setVertexData(float vertices[], int size);
-    void setVertexAttribPointer(int index, int size, int offset, int stride, bool normalized = false);
     void setIndices(unsigned int indices[], int size);
+    void setVertexAttribPointer(int index, int size, int offset, int stride, bool normalized = false);
     void setShaderProgram(Shader shaderProgram);
     void draw();
 };

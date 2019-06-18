@@ -6,6 +6,8 @@
 #include <math.h>
 #include "Shader.h"
 #include "VertexArrayObject.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 void processInput(GLFWwindow* window);
 void error_callback(int error, const char* description);
@@ -135,6 +137,58 @@ int main() {
 	v6.setVertexAttribPointer(0, 3, 0, 0);
 	v6.setShaderProgram(shader1);
 
+	float triangleVertex[] {
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.0f, 0.5f, 0.0f,
+	};
+
+	float texCoords[] {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.5f, 1.0f,
+	};
+
+	float texVertices[] = {
+		0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+	};
+
+	unsigned int texTriVAO, texTriVBO;
+	glGenBuffers(1, &texTriVBO);
+	glGenVertexArrays(1, &texTriVAO);
+	glBindVertexArray(texTriVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, texTriVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(texVertices), texVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+	glEnableVertexAttribArray(0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	int width, height, nrChannels;
+	unsigned char *data = stbi_load("./data/img/container.jpg", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else {
+		std::cerr << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+	
+	
+
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -152,15 +206,20 @@ int main() {
 		shader1.use();
 		shader1.setFloat("green", greenValue);
 
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindVertexArray(texTriVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		
+
 		v1.setShaderProgram(shader2);
 		v2.setShaderProgram(shader2);
 		v3.setShaderProgram(shader2);
-		v1.draw();
-		v2.draw();
-		v3.draw();
-		v4.draw();
-		v5.draw();
-		v6.draw();
+		// v1.draw();
+		// v2.draw();
+		// v3.draw();
+		// v4.draw();
+		// v5.draw();
+		// v6.draw();
 		
 		// wireframe
 		shader1.use();
@@ -169,12 +228,12 @@ int main() {
 		v1.setShaderProgram(shader1);
 		v2.setShaderProgram(shader1);
 		v3.setShaderProgram(shader1);
-		v1.draw();
-		v2.draw();
-		v3.draw();
-		v4.draw();
-		v5.draw();
-		v6.draw();
+		// v1.draw();
+		// v2.draw();
+		// v3.draw();
+		// v4.draw();
+		// v5.draw();
+		// v6.draw();
 		
 
 		//chaeck and call events and swap the buffers
