@@ -16,9 +16,10 @@ private:
 
 public:
     // constructor reads and builds the shader
+    Shader(){}
     Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
     // use/activate the shader
-    void use();
+    void use() const;
     unsigned int getID() const;
     // utility uniform functions
     void setBool(const std::string &name, bool value) const;
