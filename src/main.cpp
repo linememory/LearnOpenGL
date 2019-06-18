@@ -137,36 +137,39 @@ int main() {
 	v6.setVertexAttribPointer(0, 3, 0, 0);
 	v6.setShaderProgram(shader1);
 
-	float triangleVertex[] {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f,
-	};
-
-	float texCoords[] {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.5f, 1.0f,
-	};
 
 	float texVertices[] = {
-		0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+	};
+	unsigned int texIndices[] = {
+		0, 1, 3,
+		1, 2, 3
 	};
 
-	unsigned int texTriVAO, texTriVBO;
+
+	unsigned int texTriVAO, texTriVBO, TexTriEBO;
 	glGenBuffers(1, &texTriVBO);
+	glGenBuffers(1, &TexTriEBO);
 	glGenVertexArrays(1, &texTriVAO);
+
 	glBindVertexArray(texTriVAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, texTriVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texVertices), texVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TexTriEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(texIndices), texIndices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -206,14 +209,14 @@ int main() {
 		shader1.use();
 		shader1.setFloat("green", greenValue);
 
+		shader2.use();
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(texTriVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		
 
-		v1.setShaderProgram(shader2);
-		v2.setShaderProgram(shader2);
-		v3.setShaderProgram(shader2);
+		// v1.setShaderProgram(shader2);
+		// v2.setShaderProgram(shader2);
+		// v3.setShaderProgram(shader2);
 		// v1.draw();
 		// v2.draw();
 		// v3.draw();
@@ -222,12 +225,12 @@ int main() {
 		// v6.draw();
 		
 		// wireframe
-		shader1.use();
-		shader1.setFloat("green", 0.0f);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		v1.setShaderProgram(shader1);
-		v2.setShaderProgram(shader1);
-		v3.setShaderProgram(shader1);
+		// shader1.use();
+		// shader1.setFloat("green", 0.0f);
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		// v1.setShaderProgram(shader1);
+		// v2.setShaderProgram(shader1);
+		// v3.setShaderProgram(shader1);
 		// v1.draw();
 		// v2.draw();
 		// v3.draw();
