@@ -19,6 +19,8 @@ unsigned int loadShaders(const char* vertex_shader_path, const char* fragment_sh
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+float amount = 0.2f;
+
 int main() {
 	// glfw: initialize and configure
 	if(!glfwInit()){
@@ -54,89 +56,7 @@ int main() {
 	}
 
 	// build and compile our shader program
-	Shader shader1{"./data/shader/vertex_shader.txt", "./data/shader/fragment_shader.txt"};
-	Shader shader2{"./data/shader/vertex2_shader.txt", "./data/shader/fragment2_shader.txt"};
-
-
-	// set up vertex data (and buffer(s)) and configure vertex attributes
-	float vertices[] = {
-		0.5f, 0.0f, 0.0f,
-		-0.5f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,
-		-0.5f, 0.5f, 0.0f,
-		0.5f, 0.5f, 0.0f,
-		0.5f, 0.0f, 0.0f
-	};
-	float vertices1[] = {
-		0.5f, -0.0f, 0.0f,
-		-0.5f, -0.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-	};
-	float vertices2[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.5f, -0.0f, 0.0f
-	};
-	float vertices3[] = {
-		0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-		1.0f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
-		1.0f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
-		1.0f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	};
-	float vertices4[] = {
-		-0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-		-1.0f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
-		-1.0f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,
-	};
-	unsigned int indices[] = {
-		0, 1, 2,
-		1, 2, 3
-	};
-	float vertices5[] = {
-		-0.5f, 1.0f, 0.0f,
-		0.5f, 1.0f, 0.0f,
-		0.5f, 0.5f, 0.0f
-	};
-
-	// glGenVertexArrays(1, &VAO5);
-	// glGenBuffers(1, &VBO);
-	// glBindVertexArray(VAO5);
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(vertices5), vertices5, GL_STATIC_DRAW);
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	// glEnableVertexAttribArray(0);
-
-	VertexArrayObject v1, v2, v3, v4, v5, v6;
-	v1.setVertexData(vertices5, sizeof(vertices5)/sizeof(*vertices5));
-	v1.setVertexAttribPointer(0, 3, 0, 0);
-	v1.setShaderProgram(shader2);
-
-	v2.setVertexData(vertices4, sizeof(vertices4)/sizeof(*vertices4));
-	v2.setIndices(indices, sizeof(indices)/sizeof(*indices));
-	v2.setVertexAttribPointer(0, 3, 0, 6);
-	v2.setVertexAttribPointer(1, 3, 3, 6);
-	v2.setShaderProgram(shader2);
-
-	v3.setVertexData(vertices3, sizeof(vertices3)/sizeof(*vertices3));
-	v3.setVertexAttribPointer(0, 3, 0, 6);
-	v3.setVertexAttribPointer(1, 3, 3, 6);
-	v3.setShaderProgram(shader2);
-
-	v4.setVertexData(vertices2, sizeof(vertices2)/sizeof(*vertices2));
-	v4.setVertexAttribPointer(0, 3, 0, 0);
-	v4.setShaderProgram(shader1);
-
-	v5.setVertexData(vertices1, sizeof(vertices1)/sizeof(*vertices1));
-	v5.setVertexAttribPointer(0, 3, 0, 0);
-	v5.setShaderProgram(shader1);
-
-	v6.setVertexData(vertices, sizeof(vertices)/sizeof(*vertices));
-	v6.setVertexAttribPointer(0, 3, 0, 0);
-	v6.setShaderProgram(shader1);
-
+	Shader textureShader{"./data/shader/vertex2_shader.vs", "./data/shader/fragment2_shader.fs"};
 
 	float texVertices[] = {
 		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
@@ -170,17 +90,17 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	
+	//Textures
+	unsigned int texture0, texture1;
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &texture0);
+	glBindTexture(GL_TEXTURE_2D, texture0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
 	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char *data = stbi_load("./data/img/container.jpg", &width, &height, &nrChannels, 0);
 	if (data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -189,8 +109,27 @@ int main() {
 		std::cerr << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
-	
-	
+
+	glActiveTexture(GL_TEXTURE1);
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	data = stbi_load("./data/img/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else {
+		std::cerr << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+	textureShader.use();
+	textureShader.setInt("texture0", 0);
+	textureShader.setInt("texture1", 1);
+	textureShader.setFloat("amount", amount);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window))
@@ -203,41 +142,10 @@ int main() {
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		// set the color by uniform variable
-		float time = static_cast<float>(glfwGetTime());
-		float greenValue = sin(time*2) / 2.0f + 0.5f;
-		shader1.use();
-		shader1.setFloat("green", greenValue);
-
-		shader2.use();
-		glBindTexture(GL_TEXTURE_2D, texture);
+		textureShader.use();
+		textureShader.setFloat("amount", amount);
 		glBindVertexArray(texTriVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		// v1.setShaderProgram(shader2);
-		// v2.setShaderProgram(shader2);
-		// v3.setShaderProgram(shader2);
-		// v1.draw();
-		// v2.draw();
-		// v3.draw();
-		// v4.draw();
-		// v5.draw();
-		// v6.draw();
-		
-		// wireframe
-		// shader1.use();
-		// shader1.setFloat("green", 0.0f);
-		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		// v1.setShaderProgram(shader1);
-		// v2.setShaderProgram(shader1);
-		// v3.setShaderProgram(shader1);
-		// v1.draw();
-		// v2.draw();
-		// v3.draw();
-		// v4.draw();
-		// v5.draw();
-		// v6.draw();
-		
 
 		//chaeck and call events and swap the buffers
 		glfwSwapBuffers(window);
@@ -252,6 +160,17 @@ int main() {
 void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+		amount += 0.001f;
+		if(amount > 1.0f)
+			amount = 1.0f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+		amount -= 0.001f;
+		if(amount < 1.0f)
+			amount = 0.0f;
+	}
+	
 }
 
 void error_callback(int error, const char* description)
