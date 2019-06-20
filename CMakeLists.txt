@@ -8,12 +8,16 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/lib/glfw")
+
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 add_executable(${PROJECT_NAME} src/main.cpp src/glad.c src/Shader.cpp src/VertexArrayObject.cpp)
 
-target_link_libraries(${PROJECT_NAME} glfw)
+# add_subdirectory("${PROJECT_SOURCE_DIR}/lib/glfw")
+# target_link_libraries(${PROJECT_NAME} glfw)
+
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/lib/libglfw3.a)
+
 find_package(OpenGL REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
