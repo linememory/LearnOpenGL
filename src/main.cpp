@@ -131,16 +131,16 @@ int main() {
 	}
 	stbi_image_free(data);
 
-	glm::vec3 rotAxis = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 rotAxis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
 	float rotAngle{0.0f};
-	glm::mat4 trans = glm::mat4(1.0f);
+	
 	
 
 	textureShader.use();
 	textureShader.setInt("texture0", 0);
 	textureShader.setInt("texture1", 1);
 	textureShader.setFloat("amount", amount);
-	textureShader.setMatrix("trans", glm::value_ptr(trans));
+
 
 
 	double previousFrameTime = glfwGetTime();
@@ -165,8 +165,11 @@ int main() {
 		textureShader.setFloat("amount", amount);
 		glBindVertexArray(texTriVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		rotAngle = 100.0f * delta; 
+		rotAngle += 100.0f * delta; 
+		glm::mat4 trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(rotAngle), rotAxis);
+		//trans = glm::translate(trans, glm::vec3(0.5f, 0.5f, 0.0f));
+		//trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
 		textureShader.setMatrix("trans", glm::value_ptr(trans));
 		//chaeck and call events and swap the buffers
 		glfwSwapBuffers(window);
