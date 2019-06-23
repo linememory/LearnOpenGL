@@ -6,7 +6,6 @@
 #include <string>
 #include <math.h>
 #include "Shader.h"
-#include "VertexArrayObject.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <glm/glm.hpp>
@@ -21,8 +20,10 @@ void scroll_callback(GLFWwindow* window, double, double);
 std::string readFile(std::string filePath);
 unsigned int loadShaders(const char* vertex_shader_path, const char* fragment_shader_path);
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 800*2;
+const unsigned int SCR_HEIGHT = 600*2;
+
+int windowWidth = SCR_WIDTH, windowHeight = SCR_HEIGHT;
 
 float amount = 0.2f;
 
@@ -60,40 +61,68 @@ int main() {
 		return -1;
 	}
 
-	// build and compile our shader program
-	Shader textureShader{"./data/shader/vertex2_shader.vs", "./data/shader/fragment2_shader.fs"};
 
-	float texVertices[] = {
-		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+
+	float cubeVertices[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
 	};
-	unsigned int texIndices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
 
 
-	unsigned int texTriVAO, texTriVBO, TexTriEBO;
-	glGenBuffers(1, &texTriVBO);
-	glGenBuffers(1, &TexTriEBO);
-	glGenVertexArrays(1, &texTriVAO);
+	
 
-	glBindVertexArray(texTriVAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, texTriVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(texVertices), texVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TexTriEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(texIndices), texIndices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	// Cube
+	unsigned int cubeVAO, cubeVBO;
+	glGenBuffers(1, &cubeVBO);
+	glGenVertexArrays(1, &cubeVAO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+
+	Shader cubeShader{"./data/shader/cube.vs", "./data/shader/cube.fs"};
 	
 	//Textures
 	unsigned int texture0, texture1;
@@ -130,22 +159,36 @@ int main() {
 		std::cerr << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
-
-	glm::vec3 rotAxis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
-	float rotAngle{0.0f};
 	
-	
-
-	textureShader.use();
-	textureShader.setInt("texture0", 0);
-	textureShader.setInt("texture1", 1);
-	textureShader.setFloat("amount", amount);
-
-
-
 	double previousFrameTime = glfwGetTime();
 
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
 
+	glm::mat4 view = glm::mat4(1.0f);
+	// note that we're translating the scene in the reverse direction of where we want to move
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/SCR_HEIGHT, 0.1f, 100.0f);
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3( 0.0f,  0.0f,  0.0f), 
+		glm::vec3( 2.0f,  5.0f, -15.0f), 
+		glm::vec3(-1.5f, -2.2f, -2.5f),  
+		glm::vec3(-3.8f, -2.0f, -12.3f),  
+		glm::vec3( 2.4f, -0.4f, -3.5f),  
+		glm::vec3(-1.7f,  3.0f, -7.5f),  
+		glm::vec3( 1.3f, -2.0f, -2.5f),  
+		glm::vec3( 1.5f,  2.0f, -2.5f), 
+		glm::vec3( 1.5f,  0.2f, -1.5f), 
+		glm::vec3(-1.3f,  1.0f, -1.5f)  
+	};
+
+
+	glEnable(GL_DEPTH_TEST);  
+	int frames = 0;
+	float count = 0;
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -153,24 +196,46 @@ int main() {
 		previousFrameTime = glfwGetTime();
 		// std::cout << std::fixed << std::setprecision(4);
 		// std::cout << delta << std::endl;
+		int fps = 1/delta;
+		
+		if (count >= 1.0f){
+			std::cout << frames << std::endl;
+			frames = 0;
+			count = 0;
+		}
+
+		frames++;
+		count += delta;
 		//input
 		processInput(window);
 		//render
-		glClearColor(0.1f, 0.3f, 0.4f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearColor(0.1f, 0.3f, 0.4f, 1.0f);
+		glClearColor(0.3f, 0.32, 0.35, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		textureShader.use();
-		textureShader.setFloat("amount", amount);
-		glBindVertexArray(texTriVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		rotAngle += 100.0f * delta; 
-		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(rotAngle), rotAxis);
-		//trans = glm::translate(trans, glm::vec3(0.5f, 0.5f, 0.0f));
-		//trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
-		textureShader.setMatrix("trans", glm::value_ptr(trans));
+		projection = glm::perspective(glm::radians(45.0f), (float)windowWidth/windowHeight, 0.01f, 100.0f);
+
+
+		glBindVertexArray(cubeVAO);
+		for(unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i; 
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			if(i % 3 == 0)
+				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(10.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+			cubeShader.setMatrix("model", value_ptr(model));
+			cubeShader.setMatrix("view", glm::value_ptr(view));
+			cubeShader.setMatrix("projection", glm::value_ptr(projection));
+			cubeShader.use();
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+
+		
 		//chaeck and call events and swap the buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -204,6 +269,9 @@ void error_callback(int error, const char* description)
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
+	windowWidth = width;
+	windowHeight = height;
+
 	//std::cerr << width << " - " << height << std::endl;
 }
 
