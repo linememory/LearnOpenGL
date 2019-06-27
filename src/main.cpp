@@ -144,22 +144,41 @@ int main() {
 	Shader lightShader("./data/shader/light.vs", "./data/shader/light.fs");
 
 	//Textures
-	unsigned int texture0, texture1;
+	unsigned int texContainer, specContainer;
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &texture0);
-	glBindTexture(GL_TEXTURE_2D, texture0);
+	glGenTextures(1, &texContainer);
+	glBindTexture(GL_TEXTURE_2D, texContainer);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	int width, height, nrChannels;
+	const char *imgPath = "./data/img/container-texture.png";
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load("./data/img/container.jpg", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load(imgPath, &width, &height, &nrChannels, 0);
 	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	} else {
-		std::cerr << "Failed to load texture" << std::endl;
+		std::cerr << "Failed to load texture " << imgPath << std::endl;
+	}
+	stbi_image_free(data);
+
+	glActiveTexture(GL_TEXTURE1);
+	glGenTextures(1, &specContainer);
+	glBindTexture(GL_TEXTURE_2D, specContainer);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	stbi_set_flip_vertically_on_load(true);
+	imgPath = "./data/img/container-specular.png";
+	data = stbi_load(imgPath, &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else {
+		std::cerr << "Failed to load texture " << imgPath << std::endl;
 	}
 	stbi_image_free(data);
 	
@@ -226,8 +245,8 @@ int main() {
 		glm::mat4 lampModel = glm::mat4(1.0f);
 		//lampModel = glm::rotate(lampModel, (float)glm::radians(glfwGetTime()*20), glm::vec3(0.0f, 1.0f, 0.0f));
 		
-		float radius = 10;
-		lightPos = glm::vec3(sin(glfwGetTime()/2) * radius, 0.0f, cos(glfwGetTime()/2) * radius);
+		float radius = 20.0f;
+		lightPos = glm::vec3(sin(glfwGetTime()/4) * radius, 0.0f, cos(glfwGetTime()/4) * radius);
 		lampModel = glm::translate(lampModel, lightPos);
 		lampModel = glm::scale(lampModel, glm::vec3(0.2f));
 		lightShader.use();
@@ -238,28 +257,26 @@ int main() {
 		lightColor.x = sin(glfwGetTime() * 2.0f);
 		lightColor.y = sin(glfwGetTime() * 0.7f);
 		lightColor.z = sin(glfwGetTime() * 1.3f);
-		glm::vec3 lightAmbient = lightColor * 0.3f;
-		glm::vec3 lightDiffuse = lightColor * 0.8f;
+		lightColor = glm::vec3(1.0f);
+		glm::vec3 lightAmbient = lightColor * 0.4f;
+		glm::vec3 lightDiffuse = lightColor * 0.9f;
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		for(unsigned int i = 0; i < 10; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i; 
-			//model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			float angle = -20.0f * i; 
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			// if(i % 3 == 0)
-			//model = glm::rotate(model, (float)glfwGetTime() * glm::radians(10.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+			model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 			cubeShader.use();
 			cubeShader.setMat4("model", value_ptr(model));
 			cubeShader.setMat4("view", glm::value_ptr(view));
 			cubeShader.setMat4("projection", glm::value_ptr(projection));
-			cubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-			cubeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 			cubeShader.setVec3("lightPos", glm::value_ptr(lightPos));
 			cubeShader.setVec3("viewPos", camera.getPosition());
-			cubeShader.setVec3("material.ambient", 0.25f, 0.25f, 0.25f);
-			cubeShader.setVec3("material.diffuse", 0.4f, 0.4f, 0.4f);
-			cubeShader.setVec3("material.specular", 0.774597f, 0.774597f, 0.774597f);
+			cubeShader.setInt("material.diffuse", 0);
+			cubeShader.setInt("material.specular", 1);
 			cubeShader.setFloat("material.shininess", 76.0f);
 			cubeShader.setVec3("light.ambient", lightAmbient);
 			cubeShader.setVec3("light.diffuse", lightDiffuse);
