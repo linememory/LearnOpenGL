@@ -31,6 +31,7 @@ public:
     void setFOV(float fov);
     void zoom(float amount);
     glm::vec3 getPosition();
+    glm::vec3 getViewDirection();
     glm::mat4 getViewMatrix();
     glm::mat4 getProjectionMatrix(float aspectRation);
 };

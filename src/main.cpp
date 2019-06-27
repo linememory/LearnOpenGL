@@ -71,6 +71,17 @@ int main() {
 	}
 
 
+	float planeVertices[] = {
+		-50.0f, 0.0f, -50.0f,  0.0f, 1.0f, 0.0f,
+		 50.0f, 0.0f, -50.0f,  0.0f, 1.0f, 0.0f,
+		 50.0f, 0.0f,  50.0f,  0.0f, 1.0f, 0.0f,
+		 50.0f, 0.0f,  50.0f,  0.0f, 1.0f, 0.0f,
+		-50.0f, 0.0f,  50.0f,  0.0f, 1.0f, 0.0f,
+		-50.0f, 0.0f, -50.0f,  0.0f, 1.0f, 0.0f,
+	};
+
+
+
 
 	float cubeVertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
@@ -120,7 +131,7 @@ int main() {
 	
 
 	// Cube
-	unsigned int cubeVAO, lightVAO, cubeVBO;
+	unsigned int cubeVAO, lightVAO, cubeVBO, planeVAO, planeVBO;
 	glGenBuffers(1, &cubeVBO);
 	glGenVertexArrays(1, &cubeVAO);
 	glBindVertexArray(cubeVAO);
@@ -133,8 +144,21 @@ int main() {
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	
-
 	Shader cubeShader{"./data/shader/cube.vs", "./data/shader/cube.fs"};
+
+	// plane
+
+	glGenBuffers(1, &planeVBO);
+	glGenVertexArrays(1, &planeVAO);
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)( 3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	Shader planeShader{"./data/shader/plane.vs", "./data/shader/plane.fs"};
 	
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
@@ -241,18 +265,7 @@ int main() {
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		glBindVertexArray(cubeVAO);
-		glm::mat4 lampModel = glm::mat4(1.0f);
-		//lampModel = glm::rotate(lampModel, (float)glm::radians(glfwGetTime()*20), glm::vec3(0.0f, 1.0f, 0.0f));
-		
-		float radius = 20.0f;
-		lightPos = glm::vec3(sin(glfwGetTime()/4) * radius, 0.0f, cos(glfwGetTime()/4) * radius);
-		lampModel = glm::translate(lampModel, lightPos);
-		lampModel = glm::scale(lampModel, glm::vec3(0.2f));
-		lightShader.use();
-		lightShader.setMat4("model", value_ptr(lampModel));
-		lightShader.setMat4("view", glm::value_ptr(view));
-		lightShader.setMat4("projection", glm::value_ptr(projection));
+		// lights
 		glm::vec3 lightColor;
 		lightColor.x = sin(glfwGetTime() * 2.0f);
 		lightColor.y = sin(glfwGetTime() * 0.7f);
@@ -260,6 +273,47 @@ int main() {
 		lightColor = glm::vec3(1.0f);
 		glm::vec3 lightAmbient = lightColor * 0.4f;
 		glm::vec3 lightDiffuse = lightColor * 0.9f;
+
+		// plane
+		glBindVertexArray(planeVAO);
+		glm::mat4 planeModel = glm::mat4(1.0f);
+		planeShader.use();
+		planeShader.setMat4("model", glm::value_ptr(planeModel));
+		planeShader.setMat4("view", glm::value_ptr(view));
+		planeShader.setMat4("projection", glm::value_ptr(projection));
+		planeShader.setVec3("material.diffuse", 0.5f, 0.5f, 0.5f);
+		planeShader.setVec3("material.specular", 1.0f, 1.0f, 1.0f);
+		planeShader.setFloat("material.shininess", 75.0f);
+		planeShader.setVec3("light.position", glm::value_ptr(lightPos));
+		planeShader.setVec3("light.direction", camera.getViewDirection());
+		planeShader.setVec3("light.ambient", lightAmbient);
+		planeShader.setVec3("light.diffuse", lightDiffuse);
+		planeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		planeShader.setFloat("light.constant", 1.0f);
+		planeShader.setFloat("light.linear", 0.045f);
+		planeShader.setFloat("light.quadratic", 0.0075f);
+		planeShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		planeShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.0f)));
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+		// Lamp
+		glBindVertexArray(cubeVAO);
+		glm::mat4 lampModel = glm::mat4(1.0f);
+		//lampModel = glm::rotate(lampModel, (float)glm::radians(glfwGetTime()*20), glm::vec3(0.0f, 1.0f, 0.0f));
+		//if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
+			lightPos = camera.getPosition();
+		//}
+		float radius = 10;
+		//lightPos = glm::vec3(sin(glfwGetTime()/4) * radius, 0.0f, cos(glfwGetTime()/4) * radius);
+		//lampModel = glm::translate(lampModel, lightPos);
+		lampModel = glm::scale(lampModel, glm::vec3(0.2f));
+		lightShader.use();
+		lightShader.setMat4("model", value_ptr(lampModel));
+		lightShader.setMat4("view", glm::value_ptr(view));
+		lightShader.setMat4("projection", glm::value_ptr(projection));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		for(unsigned int i = 0; i < 10; i++)
 		{
@@ -273,14 +327,20 @@ int main() {
 			cubeShader.setMat4("model", value_ptr(model));
 			cubeShader.setMat4("view", glm::value_ptr(view));
 			cubeShader.setMat4("projection", glm::value_ptr(projection));
-			cubeShader.setVec3("lightPos", glm::value_ptr(lightPos));
 			cubeShader.setVec3("viewPos", camera.getPosition());
 			cubeShader.setInt("material.diffuse", 0);
 			cubeShader.setInt("material.specular", 1);
 			cubeShader.setFloat("material.shininess", 76.0f);
+			cubeShader.setVec3("light.position", glm::value_ptr(lightPos));
+			cubeShader.setVec3("light.direction", camera.getViewDirection());
 			cubeShader.setVec3("light.ambient", lightAmbient);
 			cubeShader.setVec3("light.diffuse", lightDiffuse);
 			cubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+			cubeShader.setFloat("light.constant", 1.0f);
+			cubeShader.setFloat("light.linear", 0.045f);
+			cubeShader.setFloat("light.quadratic", 0.0075f);
+			cubeShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+			cubeShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.0f)));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		
