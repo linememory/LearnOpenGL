@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch):

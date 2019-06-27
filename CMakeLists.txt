@@ -13,10 +13,10 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 add_executable(${PROJECT_NAME} src/main.cpp src/glad.c src/Shader.cpp src/Camera.cpp)
 
-# add_subdirectory("${PROJECT_SOURCE_DIR}/lib/glfw")
-# target_link_libraries(${PROJECT_NAME} glfw)
+add_subdirectory("${PROJECT_SOURCE_DIR}/lib/glfw")
+target_link_libraries(${PROJECT_NAME} glfw)
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/lib/libglfw3.a)
+#target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/lib/libglfw3.a)
 
 find_package(OpenGL REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENGL_INCLUDE_DIR})
