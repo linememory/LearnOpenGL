@@ -16,6 +16,9 @@ add_executable(${PROJECT_NAME} src/main.cpp src/glad.c src/Shader.cpp src/Camera
 add_subdirectory("${PROJECT_SOURCE_DIR}/lib/glfw")
 target_link_libraries(${PROJECT_NAME} glfw)
 
+add_subdirectory("${PROJECT_SOURCE_DIR}/lib/assimp")
+target_link_libraries(${PROJECT_NAME} assimp)
+
 #target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/lib/libglfw3.a)
 
 find_package(OpenGL REQUIRED)
