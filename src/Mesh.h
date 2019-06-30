@@ -8,6 +8,10 @@
 #include <glm/glm.hpp>
 #include "Shader.h"
 
+enum class TextureType{
+    DIFFUSE,
+    SPECULAR,
+};
 
 struct Vertex {
     glm::vec3 position;
@@ -17,14 +21,15 @@ struct Vertex {
 
 struct Texture{
     unsigned int id;
-    std::string type;
+    TextureType type;
 };
+
 
 
 class Mesh 
 {
 private:
-    unsigned int VAO, VBO, EBO;
+    unsigned int m_VAO, m_VBO, m_EBO;
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
     std::vector<Texture> m_textures;
