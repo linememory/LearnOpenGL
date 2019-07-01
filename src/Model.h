@@ -9,20 +9,25 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <glm/glm.hpp>
+
+
 
 class Model 
 {
 private:
-    std::vector<Mesh> meshes;
-    std::string directory;
+    std::vector<Mesh> m_meshes;
+    std::string m_directory;
+    std::vector<Texture> m_textures_loaded;
+    bool m_gammaCorrection;
 
-    void loadModel(std::string path);
-    void processNode(aiNode *node, const aiScene *scene);
-    Mesh processMesh(aiNode *node, const aiScene *scene);
-    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
+    void loadModel(std::string const &path);
+    void processNode(aiNode const *node, const aiScene *scene);
+    Mesh processMesh(aiMesh const *mesh, const aiScene *scene);
+    std::vector<Texture> loadMaterialTextures(aiMaterial const *mat, aiTextureType type, std::string typeName);
 public:
-    Model(char *path);
-    void Draw(Shader shader);
+    Model(std::string const &path, bool gammaCorrection = false);
+    void draw(Shader shader);
 };
 
 #endif

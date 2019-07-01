@@ -9,25 +9,29 @@
 #include "Shader.h"
 
 enum class TextureType{
-    DIFFUSE,
-    SPECULAR,
+    NONE = 0,
+    DIFFUSE = 1,
+    SPECULAR = 2,
+    AMBIENT = 3,
 };
 
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
-    glm::vec3 texCoords;
+    glm::vec2 texCoords;
+    glm::vec3 tangent;
+    glm::vec3 bitangent;
 };
 
-struct Texture{
+struct Texture {
     unsigned int id;
-    TextureType type;
+    std::string type;
+    std::string path;
 };
 
 
 
-class Mesh 
-{
+class Mesh {
 private:
     unsigned int m_VAO, m_VBO, m_EBO;
     std::vector<Vertex> m_vertices;
