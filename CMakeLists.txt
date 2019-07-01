@@ -11,7 +11,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
-add_executable(${PROJECT_NAME} src/main.cpp src/glad.c src/Shader.cpp src/Camera.cpp src/Mesh.cpp src/Model.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/glad.c src/Shader.cpp src/Camera.cpp src/Mesh.cpp src/Model.cpp src/Terrain.cpp src/noise/FastNoise.cpp)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/lib/glfw")
 target_link_libraries(${PROJECT_NAME} glfw)

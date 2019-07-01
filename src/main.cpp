@@ -10,6 +10,8 @@
 #include <array>
 #include <iostream>
 #include "Model.h"
+#include "Terrain.h"
+#include "noise/FastNoise.h"
 
 
 void processInput(GLFWwindow* window);
@@ -55,7 +57,7 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 	
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
@@ -75,7 +77,12 @@ int main() {
 	Shader modelShader{"./data/shader/model.vs", "./data/shader/model.fs"};
 	Model nanosuit{"data/mesh/nanosuit/nanosuit.obj"};
 
-	Mesh water = genPlane(30, 30);
+	//Mesh terrain = genPlane(100, 100);
+	Terrain terrain{100, 100};
+	Shader waterShader{"./data/shader/water.vs", "./data/shader/water.fs"};
+	Shader terrainShader{"./data/shader/terrain.vs", "./data/shader/terrain.fs"};
+
+
 	
 	
 	
@@ -154,8 +161,13 @@ int main() {
 		planeShader.setMat4("projection", glm::value_ptr(projection));
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
 		//water.draw(planeShader);
-		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-		water.draw(planeShader);
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+		terrainShader.use();
+		terrainShader.setMat4("model", glm::value_ptr(model));
+		terrainShader.setMat4("view", glm::value_ptr(view));
+		terrainShader.setMat4("projection", glm::value_ptr(projection));
+		terrain.draw(terrainShader);
 
 
 		//chaeck and call events and swap the buffers
@@ -249,6 +261,8 @@ unsigned int loadTexture(char const *path){
 }
 
 Mesh genPlane(int quadsX, int quadsY){
+	FastNoise noise;
+	noise.SetNoiseType(FastNoise::SimplexFractal);
 	quadsX++;
 	quadsY++;
 	std::vector<Vertex> vertices;
@@ -259,7 +273,8 @@ Mesh genPlane(int quadsX, int quadsY){
 	for (unsigned int y = 0; y < quadsY; y++) {
 		for (unsigned int x = 0; x < quadsX; x++) {
 			Vertex vertex;
-			glm::vec4 position = center * glm::vec4(x, 0.0f, y, 1.0f);
+			float multiplier = 1.5f;
+			glm::vec4 position = center * glm::vec4(x, noise.GetNoise(x*multiplier, y*multiplier)*10, y, 1.0f);
 			vertex.position = glm::vec3(position);
 			vertices.push_back(vertex);
 		}
