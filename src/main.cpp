@@ -78,7 +78,7 @@ int main() {
 	Model nanosuit{"data/mesh/nanosuit/nanosuit.obj"};
 
 	//Mesh terrain = genPlane(100, 100);
-	Terrain terrain{100, 100};
+	Terrain terrain{1000, 1000};
 	Shader waterShader{"./data/shader/water.vs", "./data/shader/water.fs"};
 	Shader terrainShader{"./data/shader/terrain.vs", "./data/shader/terrain.fs"};
 
@@ -155,6 +155,7 @@ int main() {
 		// plane
 		glBindVertexArray(planeVAO);
 		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.1f, 1.0f, 0.1f));
 		planeShader.use();
 		planeShader.setMat4("model", glm::value_ptr(model));
 		planeShader.setMat4("view", glm::value_ptr(view));
