@@ -24,7 +24,7 @@ void Terrain::generateTerain(float dimensionX, float dimensionY){
 	for (unsigned int y = 0; y < dimensionY; y++) {
 		for (unsigned int x = 0; x < dimensionX; x++) {
 			Vertex vertex;
-			float multiplier = 0.5f;
+			float multiplier = 10.0f;
 			glm::vec4 position = center * glm::vec4(x, m_noise.GetNoise(x*multiplier, y*multiplier)*10, y, 1.0f);
 			vertex.position = glm::vec3(position);
 			vertex.normal = glm::vec3(-0.24f, -1, 0.31f);
@@ -82,4 +82,70 @@ void Terrain::generateTerain(float dimensionX, float dimensionY){
 	}
 	m_meshes.push_back(Mesh(vertices, indices, std::vector<Texture>()));
 	//m_meshes.push_back(Mesh(vertices2, indices2, std::vector<Texture>()));
+}
+
+
+void Terrain::generateTerain2(float dimensionX, float dimensionY){
+	m_noise.SetNoiseType(FastNoise::NoiseType::ValueFractal);
+	// dimensionX++;
+	// dimensionY++;
+	std::vector<Vertex> vertices;
+	float quadSize = 1.0f;
+	glm::mat4 center = glm::mat4(1.0f);
+	glm::vec3 move{-dimensionX/2.0f, 0.0f, -dimensionY/2.0f};
+	center = glm::translate(center, move);
+
+	std::vector<unsigned int> indices;
+	unsigned int i = 0;
+
+	for (unsigned int y = 0; y < dimensionY-1; y++) {
+		for (unsigned int x = 0; x < dimensionX-1; x++) {
+			Vertex vertex;
+			glm::vec4 position;
+			unsigned int j;
+			float multiplier = 3.0f;
+			position = center * glm::vec4(x, m_noise.GetNoise(x*multiplier, y*multiplier)*10, y, 1.0f);
+			vertex.position = glm::vec3(position);
+			vertices.push_back(vertex);
+			indices.push_back(i++);
+
+			position = center * glm::vec4(x+quadSize, m_noise.GetNoise((x+quadSize)*multiplier, (y+quadSize)*multiplier)*10, y+quadSize, 1.0f);
+			vertex.position = glm::vec3(position);
+			vertices.push_back(vertex);
+			indices.push_back(i++);
+
+			position = center * glm::vec4(x, m_noise.GetNoise(x*multiplier, (y+quadSize)*multiplier)*10, y+quadSize, 1.0f);
+			vertex.position = glm::vec3(position);
+			vertices.push_back(vertex);
+			indices.push_back(i++);
+			j = i - 1;
+			glm::vec3 normal = glm::cross(vertices[j - 1].position - vertices[j].position, vertices[j - 2].position - vertices[j].position);
+			vertices.at(j).normal = normal;
+			vertices.at(j-1).normal = normal;
+			vertices.at(j-2).normal = normal;
+
+
+			position = center * glm::vec4(x, m_noise.GetNoise(x*multiplier, y*multiplier)*10, y, 1.0f);
+			vertex.position = glm::vec3(position);
+			vertices.push_back(vertex);
+			indices.push_back(i++);
+
+			position = center * glm::vec4(x+quadSize, m_noise.GetNoise((x+quadSize)*multiplier, y*multiplier)*10, y, 1.0f);
+			vertex.position = glm::vec3(position);
+			vertices.push_back(vertex);
+			indices.push_back(i++);
+
+			position = center * glm::vec4(x+quadSize, m_noise.GetNoise((x+quadSize)*multiplier, (y+quadSize)*multiplier)*10, y+quadSize, 1.0f);
+			vertex.position = glm::vec3(position);
+			vertices.push_back(vertex);
+			indices.push_back(i++);
+			j = i - 1;
+			normal = glm::cross(vertices[j - 1].position - vertices[j].position, vertices[j - 2].position - vertices[j].position);
+			vertices.at(j).normal = normal;
+			vertices.at(j-1).normal = normal;
+			vertices.at(j-2).normal = normal;
+		}
+	}
+	m_meshes.push_back(Mesh(vertices, indices, std::vector<Texture>()));
+
 }

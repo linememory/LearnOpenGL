@@ -34,6 +34,7 @@ bool firstMouse = true;
 Camera camera;
 
 int main() {
+	std::cout << sizeof(float) << std::endl;
 	// glfw: initialize and configure
 	if(!glfwInit()){
 		std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -78,7 +79,7 @@ int main() {
 	Model nanosuit{"data/mesh/nanosuit/nanosuit.obj"};
 
 	//Mesh terrain = genPlane(100, 100);
-	Terrain terrain{1000, 1000};
+	Terrain terrain{500, 500};
 	Shader waterShader{"./data/shader/water.vs", "./data/shader/water.fs"};
 	Shader terrainShader{"./data/shader/terrain.vs", "./data/shader/terrain.fs"};
 
@@ -109,7 +110,7 @@ int main() {
 
 	glm::mat4 model = glm::mat4(1.0f);
 
-	camera.setPosition(glm::vec3(1.2f, 1.0f, 2.0f));
+	camera.setPosition(glm::vec3(1.2f, 10.0f, 2.0f));
 
 	int frames = 0;
 	double previousFrameTime = glfwGetTime();
@@ -139,7 +140,7 @@ int main() {
 
 		glClearColor(0.25f, 0.61f, 0.95f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth/windowHeight);
@@ -155,19 +156,49 @@ int main() {
 		// plane
 		glBindVertexArray(planeVAO);
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.1f, 1.0f, 0.1f));
-		planeShader.use();
-		planeShader.setMat4("model", glm::value_ptr(model));
-		planeShader.setMat4("view", glm::value_ptr(view));
-		planeShader.setMat4("projection", glm::value_ptr(projection));
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		//water.draw(planeShader);
-		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		model = glm::scale(model, glm::vec3(0.2f, 1.0f, 0.2f));
+		// planeShader.use();
+		// planeShader.setMat4("model", glm::value_ptr(model));
+		// planeShader.setMat4("view", glm::value_ptr(view));
+		// planeShader.setMat4("projection", glm::value_ptr(projection));
+		// glDrawArrays(GL_TRIANGLES, 0, 6);
+		// water.draw(planeShader);
+		// glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+		glm::vec3 lightColor = glm::vec3(1.0f, 0.95f, 0.9f);
+		glm::vec3 lightAmbient = lightColor * 0.2f;
+		glm::vec3 lightDiffuse = lightColor * 0.5f;
+		glm::vec3 lightSpecular = lightColor;
+		glm::vec3 dirLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+		float linear = 0.09f;
+		float quadratic = 0.032f;
+		glm::vec3 dirLightDirection= glm::vec3(-0.2f, -1.0f, -0.8f);
+		dirLightDirection = glm::vec3(1.0, 0.5, 1.0);
 
 		terrainShader.use();
 		terrainShader.setMat4("model", glm::value_ptr(model));
 		terrainShader.setMat4("view", glm::value_ptr(view));
 		terrainShader.setMat4("projection", glm::value_ptr(projection));
+
+		terrainShader.setVec3("viewPos", camera.getPosition());
+		
+		terrainShader.setVec3("material.diffuse", 0.5f, 0.5f, 0.5f);
+		terrainShader.setVec3("material.specular", 0.6f, 0.6f, 0.6f);
+		terrainShader.setFloat("material.shininess", 32.0f);
+
+		terrainShader.setVec3("dirLight.direction", dirLightDirection);
+		terrainShader.setVec3("dirLight.ambient", lightAmbient);
+		terrainShader.setVec3("dirLight.diffuse", lightDiffuse);
+		terrainShader.setVec3("dirLight.specular", lightSpecular);
+		// point light		
+		terrainShader.setVec3("pointLight.position", camera.getPosition());
+		terrainShader.setFloat("pointLight.constant", 1.0f);
+		terrainShader.setFloat("pointLight.linear", linear);
+		terrainShader.setFloat("pointLight.quadratic", quadratic);
+		terrainShader.setVec3("pointLight.ambient", lightAmbient);
+		terrainShader.setVec3("pointLight.diffuse", lightDiffuse);
+		terrainShader.setVec3("pointLight.specular", lightSpecular);
+		
 		terrain.draw(terrainShader);
 
 
