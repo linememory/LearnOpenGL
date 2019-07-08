@@ -88,10 +88,10 @@ int main() {
 	Shader planeShader{"./data/shader/plane.vs", "./data/shader/plane.fs"};
 
 
-	Cube cube1{glm::vec3(10.0f, 0.0f, 0.0f)};
+	Cube cube1{glm::vec3(0.0f, 0.0f, 0.0f)};
 	
 
-	camera.setPosition(glm::vec3(-5.0f, 1.0f, 0.0f));
+	camera.setPosition(glm::vec3(0.0f, 1.0f, 5.0f));
 
 	int frames = 0;
 	double previousFrameTime = glfwGetTime();
