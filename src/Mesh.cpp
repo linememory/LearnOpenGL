@@ -15,9 +15,9 @@ void Mesh::draw(Shader shader){
     {
         glActiveTexture(GL_TEXTURE0 + i);
         std::string name = "material.";
-        if(m_textures[i].type == "diffuse"){
+        if(m_textures[i].type == TextureType::DIFFUSE){
             name += "diffuse" + diffuseNr++;
-        } else if (m_textures[i].type == "specular"){
+        } else if (m_textures[i].type == TextureType::SPECULAR){
             name += "specular" + specularNr++;
         }
         shader.setInt(name, i);
@@ -28,7 +28,6 @@ void Mesh::draw(Shader shader){
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     else
         glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
-        
     glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);
 }

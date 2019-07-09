@@ -88,10 +88,10 @@ int main() {
 	Shader planeShader{"./data/shader/plane.vs", "./data/shader/plane.fs"};
 
 
-	Cube cube1{glm::vec3(0.0f, 0.0f, 0.0f)};
-	
+	Cube cube1{glm::vec3(0.0f, 0.5f, 0.0f)};
+	cube1.loadTexture("data/img/marble.jpg", TextureType::DIFFUSE);
 
-	camera.setPosition(glm::vec3(0.0f, 1.0f, 5.0f));
+	camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
 
 	int frames = 0;
 	double previousFrameTime = glfwGetTime();
@@ -119,7 +119,7 @@ int main() {
 		processInput(window);
 
 		glClearColor(0.25f, 0.61f, 0.95f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glm::mat4 view = camera.getViewMatrix();
