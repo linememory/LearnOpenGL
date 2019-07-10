@@ -1,33 +1,32 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include "Shader.h"
-#include "Mesh.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <vector>
+#include <iostream>
+#include "Mesh.h"
+#include "Shader.h"
 
-
-
-class Model 
-{
-private:
+class Model{
+protected:
     std::vector<Mesh> m_meshes;
-    std::string m_directory;
-    std::vector<Texture> m_textures_loaded;
-    bool m_gammaCorrection;
-
-    void loadModel(std::string const &path);
-    void processNode(aiNode const *node, const aiScene *scene);
-    Mesh processMesh(aiMesh const *mesh, const aiScene *scene);
-    std::vector<Texture> loadMaterialTextures(aiMaterial const *mat, aiTextureType type, std::string typeName);
+    Shader m_shader;
+    Shader m_outlineShader;
+    glm::vec3 m_position;
+    glm::vec3 m_size;
+    glm::quat m_rotation;
+    bool m_outline = false;
 public:
-    Model(std::string const &path, bool gammaCorrection = false);
-    void draw(Shader shader);
+    Model(glm::vec3 position  = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f), glm::quat rotation = glm::quat());
+    void setMeshes(std::vector<Mesh> meshes);
+    void addMesh(Mesh mesh);
+    void setShader(std::string vertexShaderPath, std::string fragmentShaderPath);
+    void loadTexture(std::string path, TextureType type);
+    void draw(glm::mat4 view, glm::mat4 projection);
+    void drawOutline(bool outline);
 };
 
 #endif

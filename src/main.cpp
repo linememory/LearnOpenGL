@@ -89,10 +89,12 @@ int main() {
 
 
 	Cube cube1{glm::vec3(0.0f, 0.5f, 0.0f)};
-	cube1.loadTexture("data/img/marble.jpg", TextureType::DIFFUSE);
+	cube1.createCube("data/img/marble.jpg");
+	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
+
+
 
 	camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
-
 	int frames = 0;
 	double previousFrameTime = glfwGetTime();
 	float count = 0;
