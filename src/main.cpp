@@ -12,6 +12,8 @@
 #include "Terrain.h"
 #include "noise/FastNoise.h"
 #include "Cube.h"
+#include "ModelImporter.h"
+
 
 
 void processInput(GLFWwindow* window);
@@ -21,8 +23,8 @@ void scroll_callback(GLFWwindow* window, double, double);
 void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos);
 Mesh genPlane(int quadsX, int quadsY);
 
-const unsigned int SCR_WIDTH = 800*2;
-const unsigned int SCR_HEIGHT = 600*2;
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
 
 int windowWidth = SCR_WIDTH, windowHeight = SCR_HEIGHT;
 
@@ -92,6 +94,11 @@ int main() {
 	cube1.createCube("data/img/marble.jpg");
 	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
 
+	ModelImporter modelImporter;
+	Model nanosuit{glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.3f, 0.3f, 0.3f)};
+	nanosuit.setMeshes(modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj"));
+	nanosuit.setShader("data/shader/cube.vs", "data/shader/cube.fs");
+
 
 
 	camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -137,6 +144,8 @@ int main() {
 
 
 		cube1.draw(view, projection);
+
+		nanosuit.draw(view, projection);
 
 		//chaeck and call events and swap the buffers
 		glfwSwapBuffers(window);

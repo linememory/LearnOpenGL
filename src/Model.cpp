@@ -21,6 +21,7 @@ void Model::setShader(std::string vertexShaderPath, std::string fragmentShaderPa
 void Model::draw(glm::mat4 view, glm::mat4 projection){
     glm::mat4 model = glm::mat4(1.0f);
     for (Mesh mesh : m_meshes){
+        model = glm::mat4(1.0f);
         model = glm::translate(model, m_position);
         model = glm::scale(model, m_size);
 
