@@ -13,6 +13,7 @@
 #include "noise/FastNoise.h"
 #include "Cube.h"
 #include "ModelImporter.h"
+#include "Sphere.h"
 
 
 
@@ -73,25 +74,28 @@ int main() {
 		return -1;
 	}
 
-		glEnable(GL_DEPTH_TEST); 
+	
+	glEnable(GL_DEPTH_TEST); 
+	glEnable(GL_CULL_FACE);
+
 
 
 
 	// plane
 	std::vector<Vertex> planeVertices {
-		{{-50.0f, 0.0f, -50.0f},  {0.0f, 1.0f, 0.0f},},
+		{{ 50.0f, 0.0f,  50.0f},  {0.0f, 1.0f, 0.0f},},
 		{{ 50.0f, 0.0f, -50.0f},  {0.0f, 1.0f, 0.0f},},
-		{{ 50.0f, 0.0f,  50.0f},  {0.0f, 1.0f, 0.0f},},
-		{{ 50.0f, 0.0f,  50.0f},  {0.0f, 1.0f, 0.0f},},
-		{{-50.0f, 0.0f,  50.0f},  {0.0f, 1.0f, 0.0f},},
 		{{-50.0f, 0.0f, -50.0f},  {0.0f, 1.0f, 0.0f},},
+		{{-50.0f, 0.0f, -50.0f},  {0.0f, 1.0f, 0.0f},},
+		{{-50.0f, 0.0f,  50.0f},  {0.0f, 1.0f, 0.0f},},
+		{{ 50.0f, 0.0f,  50.0f},  {0.0f, 1.0f, 0.0f},},
 	};
 	Mesh plane{planeVertices, std::vector<unsigned int>(), std::vector<Texture>()};
 	Shader planeShader{"./data/shader/plane.vs", "./data/shader/plane.fs"};
 
 
-	Cube cube1{glm::vec3(0.0f, 0.5f, 0.0f)};
-	cube1.create("data/img/marble.jpg");
+	Cube cube1{"data/img/marble.jpg"};
+	cube1.transform.position = glm::vec3(0.0f, 0.5f, 0.0f);
 	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
 
 	ModelImporter modelImporter;
@@ -99,7 +103,9 @@ int main() {
 	nanosuit.setMeshes(modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj"));
 	nanosuit.setShader("data/shader/cube.vs", "data/shader/cube.fs");
 
-
+	Sphere sphere1{SphereType::ICOSAHEDRON, 100, ""};
+	sphere1.transform.position = glm::vec3(-2.0f, 0.5f, 0.0f);
+	sphere1.setShader("data/shader/sphere.vs", "data/shader/sphere.fs");
 
 	camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
 	int frames = 0;
@@ -129,7 +135,7 @@ int main() {
 
 		glClearColor(0.25f, 0.61f, 0.95f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth/windowHeight);
@@ -144,6 +150,7 @@ int main() {
 
 
 		cube1.draw(view, projection);
+		sphere1.draw(view, projection);
 
 		nanosuit.draw(view, projection);
 
