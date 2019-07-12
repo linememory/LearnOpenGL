@@ -91,7 +91,7 @@ int main() {
 
 
 	Cube cube1{glm::vec3(0.0f, 0.5f, 0.0f)};
-	cube1.createCube("data/img/marble.jpg");
+	cube1.create("data/img/marble.jpg");
 	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
 
 	ModelImporter modelImporter;
