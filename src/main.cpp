@@ -106,7 +106,7 @@ int main() {
 	double previousFrameTime = glfwGetTime();
 	float count = 0;
 	float speed = 5;
-	float sensivity = 0.05f;
+	float sensitivity = 0.05f;
 	bool firstMouse = true;
 
 	while (!glfwWindowShouldClose(window))
@@ -190,7 +190,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos){
-	float sensivity = 0.05f;
+	float sensitivity = 0.05f;
 	if(firstMouse){
 		lastX = xPos;
 		lastY = yPos;
@@ -200,8 +200,8 @@ void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos){
 	float yOffset = lastY - yPos;
 	lastX = xPos;
 	lastY = yPos;
-	xOffset *= sensivity;
-	yOffset *= sensivity;
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
 	camera.rotate(yOffset, xOffset);
 }
 
