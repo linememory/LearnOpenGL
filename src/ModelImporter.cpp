@@ -4,16 +4,19 @@
 unsigned int TextureFromFile(const char *path, const std::string &directory);
 
 
-std::vector<Mesh> ModelImporter::loadModel(std::string const &path){
+void ModelImporter::loadModel(std::string const &path, Model &model){
     Assimp::Importer import;
     const aiScene *scene = import.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate);
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
-        std::cerr << "ERROR::ASIMP::" << import.GetErrorString() << std::endl;
-        return m_meshes;
+        std::cerr << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        return;
+        //return m_meshes;
     }
     m_directory = path.substr(0, path.find_last_of('/'));
     processNode(scene->mRootNode, scene);
-    return m_meshes;
+    model.setMeshes(m_meshes);
+    model.boundingBox = boundingBox;
+    //return m_meshes;
 }
 
 void ModelImporter::processNode(aiNode const *node, const aiScene *scene){
@@ -38,6 +41,15 @@ Mesh ModelImporter::processMesh(aiMesh const *mesh, const aiScene *scene){
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
         vertex.position = vector;
+
+        // set the bounding box
+        boundingBox.min.x = (boundingBox.min.x > mesh->mVertices[i].x) ? mesh->mVertices[i].x : boundingBox.min.x;
+        boundingBox.min.y = (boundingBox.min.y > mesh->mVertices[i].y) ? mesh->mVertices[i].y : boundingBox.min.y;
+        boundingBox.min.z = (boundingBox.min.z > mesh->mVertices[i].z) ? mesh->mVertices[i].z : boundingBox.min.z;
+        boundingBox.max.x = (boundingBox.max.x < mesh->mVertices[i].x) ? mesh->mVertices[i].x : boundingBox.max.x;
+        boundingBox.max.y = (boundingBox.max.y < mesh->mVertices[i].y) ? mesh->mVertices[i].y : boundingBox.max.y;
+        boundingBox.max.z = (boundingBox.max.z < mesh->mVertices[i].z) ? mesh->mVertices[i].z : boundingBox.max.z;
+
         vector.x = mesh->mNormals[i].x;
         vector.y = mesh->mNormals[i].y;
         vector.z = mesh->mNormals[i].z;

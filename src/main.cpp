@@ -76,7 +76,7 @@ int main() {
 
 	
 	glEnable(GL_DEPTH_TEST); 
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 
 
@@ -99,9 +99,11 @@ int main() {
 	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
 
 	ModelImporter modelImporter;
-	Model nanosuit{glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.3f, 0.3f, 0.3f)};
-	nanosuit.setMeshes(modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj"));
+	Model nanosuit{glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)};
+	modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj", nanosuit);
+	//nanosuit.setMeshes(modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj"));
 	nanosuit.setShader("data/shader/cube.vs", "data/shader/cube.fs");
+	nanosuit.drawOutline(true);
 
 	Sphere sphere1{SphereType::ICOSAHEDRON, 100, ""};
 	sphere1.transform.position = glm::vec3(-2.0f, 0.5f, 0.0f);
@@ -135,7 +137,7 @@ int main() {
 
 		glClearColor(0.25f, 0.61f, 0.95f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth/windowHeight);
@@ -146,11 +148,13 @@ int main() {
 		planeShader.setMat4("view", glm::value_ptr(view));
 		planeShader.setMat4("model", glm::value_ptr(model));
 		planeShader.setMat4("projection", glm::value_ptr(projection));
-		plane.draw(planeShader);
+		// plane.draw(planeShader);
 
 
-		cube1.draw(view, projection);
-		sphere1.draw(view, projection);
+		// cube1.draw(view, projection);
+		// cube1.drawOutline(true);
+
+		// sphere1.draw(view, projection);
 
 		nanosuit.draw(view, projection);
 

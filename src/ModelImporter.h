@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Mesh.h"
+#include "Model.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -14,13 +15,15 @@ private:
     std::vector<unsigned int> m_indices;
     std::vector<Texture> m_textures;
     std::vector<Texture> m_texturesLoaded;
+    BoundingBox boundingBox;
+
     std::string m_directory;
 
     void processNode(aiNode const *node, const aiScene *scene);
     Mesh processMesh(aiMesh const *mesh, const aiScene *scene);
     std::vector<Texture> loadMaterialTextures(aiMaterial const *mat, aiTextureType type, TextureType typeName);
 public:
-    std::vector<Mesh> loadModel(std::string const &path);
+    void loadModel(std::string const &path, Model &model);
 };
 
 #endif

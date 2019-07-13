@@ -43,7 +43,6 @@ private:
 public:
     Mesh(std::vector<Vertex> vertices = std::vector<Vertex>(), std::vector<unsigned int> indices = std::vector<unsigned int>(), std::vector<Texture> textures = std::vector<Texture>());
     void draw(Shader shader);
-    void drawOutline(Shader shader);
 };
 
 #endif

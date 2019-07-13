@@ -7,6 +7,9 @@ std::vector<Vertex> generateCube();
 
 Cube::Cube(const std::string &diffuseTexture, const std::string &specularTexture){
     create(diffuseTexture, specularTexture);
+    boundingBox.min = glm::vec3(-0.5f, -0.5f, -0.5f);
+    boundingBox.max = glm::vec3(0.5f, 0.5f, 0.5f);
+
 }
 
 void Cube::create(std::string diffuseTexture, std::string specularTexture){
