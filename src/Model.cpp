@@ -36,6 +36,9 @@ void Model::drawBoundingBox(glm::mat4 model, glm::mat4 view, glm::mat4 projectio
     m_boundingBox = Mesh{verts, indices}; 
     Shader shader{"data/shader/line.vs", "data/shader/line.fs"};
     shader.use();
+    // model = glm::mat4(1.0f);
+    // model = glm::translate(model, transform.position);
+    // model = glm::scale(model, transform.size);
     shader.setMat4("model", glm::value_ptr(model));
     shader.setMat4("view", glm::value_ptr(view));
     shader.setMat4("projection", glm::value_ptr(projection));
@@ -45,6 +48,7 @@ void Model::drawBoundingBox(glm::mat4 model, glm::mat4 view, glm::mat4 projectio
 }
 
 void Model::draw(const glm::mat4 &view, const glm::mat4 &projection){
+    m_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
     glm::mat4 model = glm::mat4(1.0f);
     for (Mesh mesh : m_meshes){
         model = glm::mat4(1.0f);
@@ -70,9 +74,17 @@ void Model::draw(const glm::mat4 &view, const glm::mat4 &projection){
             glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
             glStencilMask(0x00);
             //glDisable(GL_DEPTH_TEST);
+
+            glm::vec3 center = -((boundingBox.max - boundingBox.min)/2.0f + boundingBox.min);
+            glm::vec3 cc{center};
+            glm::mat4 bb = glm::mat4(1.0f);
+            bb = glm::scale(bb, transform.size);
+            cc = glm::vec3(glm::vec4(cc, 1.0f) * bb);
             
             model = glm::mat4(1.0f);
-            model = glm::scale(model, transform.size+0.05f);
+            model = glm::translate(model, -cc);
+            model = glm::scale(model, transform.size+0.01f);
+            model = glm::translate(model, center);
             m_outlineShader.use();
             m_outlineShader.setMat4("model", glm::value_ptr(model));
             m_outlineShader.setMat4("view", glm::value_ptr(view));

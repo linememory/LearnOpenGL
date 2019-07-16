@@ -26,6 +26,8 @@ protected:
     std::vector<Mesh> m_meshes;
     Shader m_shader;
     Shader m_outlineShader;
+    bool m_cullFace = true;
+    bool m_blend = false;
     bool m_outline = false;
     Mesh m_boundingBox;
 
@@ -33,6 +35,7 @@ protected:
 public:
     Transform transform;
     BoundingBox boundingBox;
+    //Model() = default;
     Model(glm::vec3 position  = glm::vec3(0.0f), glm::vec3 size = glm::vec3(1.0f), glm::quat rotation = glm::quat());
     void setMeshes(std::vector<Mesh> meshes);
     void addMesh(Mesh mesh);

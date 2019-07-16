@@ -1,19 +1,20 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+//#include "stb_image.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "noise/FastNoise.h"
+#include <iostream>
+#include <array>
 #include "Shader.h"
 #include "Camera.h"
-#include <array>
-#include <iostream>
 #include "Terrain.h"
-#include "noise/FastNoise.h"
-#include "Cube.h"
 #include "ModelImporter.h"
+#include "Cube.h"
 #include "Sphere.h"
+#include "Grass.h"
 
 
 
@@ -76,7 +77,7 @@ int main() {
 
 	
 	glEnable(GL_DEPTH_TEST); 
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 
 
 
@@ -93,21 +94,22 @@ int main() {
 	Mesh plane{planeVertices, std::vector<unsigned int>(), std::vector<Texture>()};
 	Shader planeShader{"./data/shader/plane.vs", "./data/shader/plane.fs"};
 
-
 	Cube cube1{"data/img/marble.jpg"};
 	cube1.transform.position = glm::vec3(0.0f, 0.5f, 0.0f);
 	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
 
 	ModelImporter modelImporter;
-	Model nanosuit{glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)};
+	Model nanosuit{glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.3f)};
 	modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj", nanosuit);
 	//nanosuit.setMeshes(modelImporter.loadModel("data/mesh/nanosuit/nanosuit.obj"));
 	nanosuit.setShader("data/shader/cube.vs", "data/shader/cube.fs");
-	nanosuit.drawOutline(true);
 
-	Sphere sphere1{SphereType::ICOSAHEDRON, 100, ""};
+	Sphere sphere1{SphereType::ICOSAHEDRON, 100, "data/img/marble.jpg"}; // Texture doesn't work due to missing texcoords
 	sphere1.transform.position = glm::vec3(-2.0f, 0.5f, 0.0f);
 	sphere1.setShader("data/shader/sphere.vs", "data/shader/sphere.fs");
+
+	Grass grass1;
+	grass1.transform.position = glm::vec3(1.0f, 0.0f, 0.0f);
 
 	camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
 	int frames = 0;
@@ -148,15 +150,16 @@ int main() {
 		planeShader.setMat4("view", glm::value_ptr(view));
 		planeShader.setMat4("model", glm::value_ptr(model));
 		planeShader.setMat4("projection", glm::value_ptr(projection));
-		// plane.draw(planeShader);
+		plane.draw(planeShader);
 
 
-		// cube1.draw(view, projection);
-		// cube1.drawOutline(true);
+		cube1.draw(view, projection);
 
-		// sphere1.draw(view, projection);
+		sphere1.draw(view, projection);
 
 		nanosuit.draw(view, projection);
+
+		grass1.draw(view, projection);
 
 		//chaeck and call events and swap the buffers
 		glfwSwapBuffers(window);
