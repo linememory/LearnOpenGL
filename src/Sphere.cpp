@@ -23,7 +23,7 @@ Sphere::Sphere(SphereType type, int faces, const std::string &diffuseTexture, co
     //createSpherifiedCube(color);
         break;
     case SphereType::ICOSAHEDRON:
-        createIcosahedron(2);
+        createIcosahedron(5);
         break;
     default:
         break;

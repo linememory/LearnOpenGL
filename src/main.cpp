@@ -108,7 +108,7 @@ int main() {
 	sphere1.transform.position = glm::vec3(-2.0f, 0.5f, 0.0f);
 	sphere1.setShader("data/shader/sphere.vs", "data/shader/sphere.fs");
 
-	Grass grass1;
+	Grass grass1{"data/img/download.png"};
 	grass1.transform.position = glm::vec3(1.0f, 0.0f, 0.0f);
 
 	camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -139,7 +139,7 @@ int main() {
 
 		glClearColor(0.25f, 0.61f, 0.95f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = camera.getProjectionMatrix((float)windowWidth/windowHeight);
