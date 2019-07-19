@@ -20,7 +20,7 @@ private:
 public:
     // constructor reads and builds the shader
     Shader(){}
-    Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
+    Shader(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath = nullptr);
     // use/activate the shader
     void use() const;
     unsigned int getID() const;
