@@ -1,7 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,8 +15,6 @@
 #include "Sphere.h"
 #include "Grass.h"
 
-
-
 void processInput(GLFWwindow* window);
 void error_callback(int error, const char* description);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -27,14 +24,10 @@ Mesh genPlane(int quadsX, int quadsY);
 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
-
 int windowWidth = SCR_WIDTH, windowHeight = SCR_HEIGHT;
-
 float deltaTime = 0;
 float lastX = windowWidth/2.0f, lastY = windowHeight/2.0f;
 bool firstMouse = true;
-
-
 Camera camera;
 
 int main() {
@@ -66,21 +59,15 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 
-	
-
 	// glad: load all OpenGL function pointers
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-
 	
 	glEnable(GL_DEPTH_TEST); 
 	glEnable(GL_CULL_FACE);
-
-
-
 
 	// plane
 	std::vector<Vertex> planeVertices {
@@ -97,6 +84,7 @@ int main() {
 	Cube cube1{"data/img/marble.jpg"};
 	cube1.transform.position = glm::vec3(0.0f, 0.5f, 0.0f);
 	cube1.setShader("data/shader/cube.vs", "data/shader/cube.fs");
+	cube1.showNnormals = true;
 
 	ModelImporter modelImporter;
 	Model nanosuit{glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.3f)};
@@ -168,7 +156,6 @@ int main() {
 		
 		glfwPollEvents();
 	}
-
 	// glfw: terminate, clearing all previously allocated GLFW resources
 	glfwTerminate();
 	return 0;

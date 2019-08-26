@@ -16,8 +16,21 @@ void GenerateLine(int index){
     EndPrimitive();
 }
 
-void main() {    
-    GenerateLine(0);
-    GenerateLine(1);
-    GenerateLine(2);
+void GenerateNormalLine(){
+    vec4 center = 1.0/3.0 * (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position);
+    //center = gl_in[0].gl_Position;
+    vec3 normal = normalize(gs_in[0].normal + gs_in[1].normal + gs_in[2].normal);
+    //normal = gs_in[0].normal;
+    gl_Position = center;
+    EmitVertex();
+    gl_Position = center + vec4(normal, 0.0) * magnitude;
+    EmitVertex();
+    EndPrimitive();
+}
+
+void main() {
+    GenerateNormalLine();
+    // GenerateLine(0);
+    // GenerateLine(1);
+    // GenerateLine(2);
 }  
